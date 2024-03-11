@@ -116,6 +116,7 @@ public class MaquinaDulces {
 	 this.saldo+=celdaRecuperada.getProducto().getPrecio();
 	 
 	 this.mostrarProductos();
+	
   }
   
   
