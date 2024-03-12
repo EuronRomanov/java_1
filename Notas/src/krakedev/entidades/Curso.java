@@ -50,7 +50,7 @@ public class Curso {
 				if (est.getCedula().equals(estudiante.getCedula())&&
 				est.getNombre().equalsIgnoreCase(estudiante.getNombre()) &&
 				est.getApellido().equalsIgnoreCase(estudiante.getApellido())) {
-					mensaje="Ya existe producto";
+					mensaje="Ya existe estudiante";
 				}
 			}
 		}
