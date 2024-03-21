@@ -1,14 +1,25 @@
 package com.krakedev.persistencia.servicios;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.krakedev.persistencia.entidades.EstadoCivil;
 import com.krakedev.persistencia.entidades.Persona;
 import com.krakedev.presistencia.util.ConexionBDD;
+import com.krakedev.presistencia.util.Convertidor;
 
 public class AdminPersonas {
 private static final Logger LOGGER=LogManager.getLogger(AdminPersonas.class);
@@ -148,5 +159,226 @@ private static final Logger LOGGER=LogManager.getLogger(AdminPersonas.class);
 		}
 		
 	}
+	
+	
+	//buscar
+	
+	public static ArrayList<Persona> buscarPorNombre(String nombreBusquedad) throws Exception {
+		ArrayList<Persona> personas=new ArrayList<Persona>();
+		
+		Connection con=null;
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		LOGGER.trace("Buscar en personas>>"+nombreBusquedad);
+		try {
+			con=ConexionBDD.conectar();
+			String nuevaPersona="select * from personas where nombre like ?";
+			
+			ps=con.prepareStatement(nuevaPersona);
+			ps.setString(1, "%"+nombreBusquedad+"%");
+			
+			
+			rs=ps.executeQuery();
+			
+			while (rs.next()) {
+				
+				String cedula=rs.getString("cedula");
+				 String nombre=rs.getString("nombre");
+				 String apellido=rs.getString("apellido");
+				 EstadoCivil estadoCivil=new EstadoCivil();
+				 estadoCivil.setCodigo(rs.getString("estado_civil_codigo"));
+				 int numeroHijos=rs.getInt("numero_hijos");
+				 double estatura=rs.getDouble("estatura");
+				 
+				// Obtener el valor del ResultSet
+		          
+		            String valorMoneyString = rs.getString("cantidad_ahorrada");
+		            
+		           
+		         //  String  valorMoneyString1 = valorMoneyString.replace("$", "").replace(",", "");
+	
+				BigDecimal cantidadAhorrada=convertirStringToBigDecimal(valorMoneyString);
+				 Date fechaNacimiento=rs.getDate("fecha_nacimiento");
+				 Date horaNacimiento=Convertidor.convertirHora2( rs.getTime("hora_nacimiento").toString());
+				
+				Persona p=new Persona(cedula, nombre, apellido, estadoCivil, numeroHijos, estatura, cantidadAhorrada, fechaNacimiento, horaNacimiento);
+				personas.add(p);
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			//System.out.println(e.getMessage());
+			//e.printStackTrace();
+			
+			LOGGER.error("Error al  consultar personas", e);
+			 
+		}finally{
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				LOGGER.error("Error cn la base de datos", e);
+				throw new Exception("Error con la base de datos");
+				
+			}
+		}
+		
+		return personas;
+		
+	}
+	
+	//buscar por codigo 
+	
+	public static Persona buscarPorClave(String nombreBusquedad) throws Exception {
+		Persona persona=null;
+		
+		Connection con=null;
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		LOGGER.trace("Buscar en personas>>"+nombreBusquedad);
+		try {
+			con=ConexionBDD.conectar();
+			String nuevaPersona="select * from personas where cedula=?";
+			
+			ps=con.prepareStatement(nuevaPersona);
+			ps.setString(1, nombreBusquedad);
+			
+			
+			rs=ps.executeQuery();
+			
+			if (rs.next()) {
+				
+				String cedula=rs.getString("cedula");
+				 String nombre=rs.getString("nombre");
+				 String apellido=rs.getString("apellido");
+				 EstadoCivil estadoCivil=new EstadoCivil();
+				 estadoCivil.setCodigo(rs.getString("estado_civil_codigo"));
+				 int numeroHijos=rs.getInt("numero_hijos");
+				 double estatura=rs.getDouble("estatura");
+				 
+				// Obtener el valor del ResultSet
+		          
+		            String valorMoneyString = rs.getString("cantidad_ahorrada");
+		            
+		           
+		         //  String  valorMoneyString1 = valorMoneyString.replace("$", "").replace(",", "");
+	
+				BigDecimal cantidadAhorrada=convertirStringToBigDecimal(valorMoneyString);
+				 Date fechaNacimiento=rs.getDate("fecha_nacimiento");
+				 Date horaNacimiento=Convertidor.convertirHora2( rs.getTime("hora_nacimiento").toString());
+				
+				 persona=new Persona(cedula, nombre, apellido, estadoCivil, numeroHijos, estatura, cantidadAhorrada, fechaNacimiento, horaNacimiento);
+				
+			}else {
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			//System.out.println(e.getMessage());
+			//e.printStackTrace();
+			
+			LOGGER.error("Error al  consultar personas", e);
+			 
+		}finally{
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				LOGGER.error("Error cn la base de datos", e);
+				throw new Exception("Error con la base de datos");
+				
+			}
+		}
+		
+		return persona;
+		
+	}
+	
+	//buscar y obtenr varios resultados
+	
+		public static ArrayList<Persona> buscarPorFecha(String fechaBusquedad) throws Exception {
+			ArrayList<Persona> personas=new ArrayList<Persona>();
+			
+			Connection con=null;
+			PreparedStatement ps=null;
+			ResultSet rs=null;
+			LOGGER.trace("Buscar en personas>>"+fechaBusquedad);
+			try {
+				con=ConexionBDD.conectar();
+				String nuevaPersona="select * from personas where fecha_nacimiento=?";
+				
+				ps=con.prepareStatement(nuevaPersona);
+				ps.setDate(1,new java.sql.Date(Convertidor.convertirFecha(fechaBusquedad).getTime()));
+				
+				
+				rs=ps.executeQuery();
+				
+				while (rs.next()) {
+					
+					String cedula=rs.getString("cedula");
+					 String nombre=rs.getString("nombre");
+					 String apellido=rs.getString("apellido");
+					 EstadoCivil estadoCivil=new EstadoCivil();
+					 estadoCivil.setCodigo(rs.getString("estado_civil_codigo"));
+					 int numeroHijos=rs.getInt("numero_hijos");
+					 double estatura=rs.getDouble("estatura");
+					 
+					// Obtener el valor del ResultSet
+			          
+			            String valorMoneyString = rs.getString("cantidad_ahorrada");
+			            
+			           
+			         //  String  valorMoneyString1 = valorMoneyString.replace("$", "").replace(",", "");
+		
+					BigDecimal cantidadAhorrada=convertirStringToBigDecimal(valorMoneyString);
+					 Date fechaNacimiento=rs.getDate("fecha_nacimiento");
+					 Date horaNacimiento=Convertidor.convertirHora2( rs.getTime("hora_nacimiento").toString());
+					
+					Persona p=new Persona(cedula, nombre, apellido, estadoCivil, numeroHijos, estatura, cantidadAhorrada, fechaNacimiento, horaNacimiento);
+					personas.add(p);
+				}
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+				//System.out.println(e.getMessage());
+				//e.printStackTrace();
+				
+				LOGGER.error("Error al  consultar personas", e);
+				 
+			}finally{
+				try {
+					con.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					LOGGER.error("Error cn la base de datos", e);
+					throw new Exception("Error con la base de datos");
+					
+				}
+			}
+			
+			return personas;
+			
+		}
+	
+	
+	
+	private static BigDecimal convertirStringToBigDecimal(String valorString) {
+        try {
+            // Crear un objeto NumberFormat para el formato de moneda
+            NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
+            
+            // Convertir el String a un Number
+            Number number = format.parse(valorString);
+            
+            // Convertir el Number a BigDecimal
+            return new BigDecimal(number.toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+	
+	
 	
 }

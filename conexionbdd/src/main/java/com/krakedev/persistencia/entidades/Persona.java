@@ -3,6 +3,8 @@ package com.krakedev.persistencia.entidades;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.krakedev.presistencia.util.Convertidor;
+
 public class Persona {
 private String cedula;
 private String nombre;
@@ -226,7 +228,7 @@ public void setHoraNacimiento(Date horaNacimiento) {
 public String toString() {
 	return "Persona [cedula=" + cedula + ", nombre=" + nombre + ", apellido=" + apellido + ", estadoCivil="
 			+ estadoCivil + ", numeroHijos=" + numeroHijos + ", estatura=" + estatura + ", cantidadAhorrada="
-			+ cantidadAhorrada + ", fechaNacimiento=" + fechaNacimiento + ", horaNacimiento=" + horaNacimiento + "]";
+			+ cantidadAhorrada + ", fechaNacimiento=" + fechaNacimiento + ", horaNacimiento=" +Convertidor.formatoHora(horaNacimiento)  + "]";
 }
 
 

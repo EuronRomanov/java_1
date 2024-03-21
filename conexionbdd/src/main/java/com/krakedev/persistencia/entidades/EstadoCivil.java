@@ -37,4 +37,10 @@ public void setDescripcion(String descripcion) {
 }
 
 
+@Override
+public String toString() {
+	return "EstadoCivil [codigo=" + codigo + ", descripcion=" + descripcion + "]";
+}
+
+
 }

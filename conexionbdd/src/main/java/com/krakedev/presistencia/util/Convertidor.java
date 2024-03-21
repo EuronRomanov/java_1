@@ -44,5 +44,31 @@ try {
 }
 
 
+public static Date convertirHora2(String fechaStr) throws Exception {
+SimpleDateFormat sdf=new SimpleDateFormat("hh:mm:ss");
+Date fechaDate=null;
+try {
+	 fechaDate=sdf.parse(fechaStr);
+} catch (ParseException e) {
+	// TODO: handle exception
+	e.printStackTrace();
+	throw new Exception("La fecha no tiene el formato correcto");
+}
+	return fechaDate;
+}
+
+
+public static String formatoHora(Date fecha) {
+SimpleDateFormat sdf=new SimpleDateFormat("HH:mm");
+String fechaDate="";
+try {
+	 fechaDate=sdf.format(fecha);
+} catch (Exception e) {
+	// TODO: handle exception
+	e.printStackTrace();
+	//throw new Exception("La fecha no tiene el formato correcto");
+}
+	return fechaDate;
+}
 
 }
