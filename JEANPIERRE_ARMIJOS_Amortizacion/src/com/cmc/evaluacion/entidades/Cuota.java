@@ -10,7 +10,8 @@ private double inicio;
 private double interes;
 private double abonoCapital;
 private double saldo;
-
+private boolean pagado=false;
+private double pediente;
 
 
 
@@ -57,13 +58,31 @@ public double getSaldo() {
 public void setSaldo(double saldo) {
 	this.saldo = saldo;
 }
+
+
+public boolean isPagado() {
+	return pagado;
+}
+public void setPagado(boolean pagado) {
+	this.pagado = pagado;
+}
+public double getPediente() {
+	return pediente;
+}
+public void setPediente(double pediente) {
+	this.pediente = pediente;
+}
 public void mostrarPrestamo() {
-	System.out.println(numero + "|" + cuota + " | "  +Utilitario.redondear(inicio)  + " | "
+	System.out.println(numero + "|" + Utilitario.redondear(cuota) + " | "  +Utilitario.redondear(inicio)  + " | "
 			+ Utilitario.redondear(interes) + " | " + Utilitario.redondear(abonoCapital)  + " | " +Utilitario.redondear( saldo)  );
 	
 }
 
-
+public void mostrarPrestamoTotal() {
+	System.out.println(numero + "|" + Utilitario.redondear(cuota) + " | "  +Utilitario.redondear(inicio)  + " | "
+			+ Utilitario.redondear(interes) + " | " + Utilitario.redondear(abonoCapital)  + " | " +Utilitario.redondear( saldo)+ " | "+pagado+ " | "+pediente );
+	
+}
 
 
 
